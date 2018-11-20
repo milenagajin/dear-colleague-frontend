@@ -32,7 +32,7 @@ export default class AuthService {
         password
       })
     }).then(res => {
-      console.log(res.token);
+      console.log(res);
       this.setToken(res.token);
       return Promise.resolve(res);
     });
@@ -77,7 +77,6 @@ export default class AuthService {
   }
 
   fetch(url, options) {
-    console.log("fetch");
     // performs api calls sending the required authentication headers
     const headers = {
       Accept: "application/json",

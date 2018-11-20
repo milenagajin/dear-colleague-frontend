@@ -25,7 +25,7 @@ class RegisterComponent extends Component {
     this.auth
       .register(this.state.name, this.state.email, this.state.password)
       .then(res => {
-        // console.log("usla");
+        console.log("usla");
         this.props.history.replace("/");
       })
       .catch(err => {
@@ -42,7 +42,7 @@ class RegisterComponent extends Component {
             <input
               className="form-item"
               placeholder="Name goes here..."
-              name="Name"
+              name="name"
               type="text"
               onChange={this.handleChange}
             />

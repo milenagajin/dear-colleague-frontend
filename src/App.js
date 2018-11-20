@@ -1,28 +1,33 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import AuthService from "./services/AuthService";
+import withAuthComponent from "./components/withAuthComponent";
+const Auth = new AuthService();
 
 class App extends Component {
+  handleLogout() {
+    Auth.logout();
+    this.props.history.replace("/login");
+  }
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+        <div>
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
+          <h2>Welcome {this.props.user.email}</h2>
+        </div>
+        <p className="App-intro">
+          <button
+            type="button"
+            className="form-submit"
+            onClick={this.handleLogout.bind(this)}
           >
-            Learn React
-          </a>
-        </header>
+            Logout
+          </button>
+        </p>
       </div>
     );
   }
 }
-
-export default App;
+export default withAuthComponent(App);

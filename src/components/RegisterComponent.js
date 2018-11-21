@@ -26,7 +26,7 @@ class RegisterComponent extends Component {
       .register(this.state.name, this.state.email, this.state.password)
       .then(res => {
         console.log("usla");
-        this.props.history.replace("/");
+        this.props.history.replace("/campaign");
       })
       .catch(err => {
         alert(err);

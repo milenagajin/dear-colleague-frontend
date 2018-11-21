@@ -3,6 +3,7 @@ import AuthService from "../services/AuthService";
 
 export default function withAuthComponent(AuthComponent) {
   const Auth = new AuthService("http://localhost:8000");
+
   return class AuthWrapped extends Component {
     constructor() {
       super();

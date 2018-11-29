@@ -1,23 +1,26 @@
 import React, { Component } from "react";
-import withAuthComponent from "./components/withAuthComponent";
-import CampaignService from "./services/CampaignService";
+import CampaignService from "../services/CampaignService";
+import withAuthComponent from "../components/withAuthComponent";
+import NavbarScreen from "./NavbarScreen";
 
 class AddEditCampaignScreen extends Component {
   constructor(props) {
-    this.setState({
+    super(props);
+
+    this.state = {
       id: null,
       name: "",
       company_name: ""
-    });
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
   componentDidMount() {
-    let id = this.props.match.params.id;
-
+    const id = this.props.match.params.id;
     if (id) {
+      console.log(CampaignService.getOne);
       CampaignService.getOne(id)
         .then(response => {
           this.setState({
@@ -69,36 +72,40 @@ class AddEditCampaignScreen extends Component {
 
   render() {
     return (
-      <div className="center">
-        <div className="card">
-          <h1>Login</h1>
-          <form>
-            <input
-              className="form-item"
-              placeholder="Name of campaign"
-              name="name"
-              type="text"
-              value={this.state.name}
-              onChange={this.handleChange}
-            />
-            <input
-              className="form-item"
-              name="company_name"
-              type="text"
-              value={this.state.company_name}
-              onChange={this.handleChange}
-            />
-            <input
-              className="form-submit"
-              value="SUBMIT"
-              type="submit"
-              onClick={this.handleFormSubmit}
-            />
-          </form>
+      <div>
+        <NavbarScreen history={this.props.history} />
+        <div className="center">
+          <div className="card">
+            <h1>CAMPAIGN:</h1>
+            <form>
+              <input
+                className="form-item"
+                placeholder="Name of campaign"
+                name="name"
+                type="text"
+                value={this.state.name}
+                onChange={this.handleChange}
+              />
+              <input
+                className="form-item"
+                placeholder="Company name "
+                name="company_name"
+                type="text"
+                value={this.state.company_name}
+                onChange={this.handleChange}
+              />
+              <input
+                className="form-submit"
+                value="SUBMIT"
+                type="submit"
+                onClick={this.handleFormSubmit}
+              />
+            </form>
+          </div>
         </div>
       </div>
     );
   }
 }
 
-export default withAuthComponent(CampaignScreen);
+export default withAuthComponent(AddEditCampaignScreen);

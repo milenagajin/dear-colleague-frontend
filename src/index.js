@@ -3,21 +3,13 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import LoginComponent from "./components/LoginComponent";
-import Nav from "./components/Nav";
-import "bootstrap/dist/css/bootstrap.min.css";
-import RegisterComponent from "./components/RegisterComponent";
+import { BrowserRouter, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.css";
+
 ReactDOM.render(
-  <Router>
-    <div>
-      <Nav />
-      <Route exact path="/" component={App} />
-      <Route exact path="/login" component={LoginComponent} />
-      <Route exact path="/register" component={RegisterComponent} />
-      <Route exact path="/campaigns/:id" component={AddEditCampaignScreen} />
-    </div>
-  </Router>,
+  <BrowserRouter>
+    <Route path="/" component={App} />
+  </BrowserRouter>,
   document.getElementById("root")
 );
 

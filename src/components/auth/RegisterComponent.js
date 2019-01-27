@@ -1,16 +1,15 @@
 import React, { Component } from "react";
-import AuthService from "../services/AuthService";
+import AuthService from "../../services/AuthService";
 
 class RegisterComponent extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.auth = new AuthService("http://localhost:8000/api");
   }
 
   componentWillMount() {
-    if (this.auth.loggedIn()) this.props.history.replace("/");
+    if (AuthService.loggedIn()) this.props.history.replace("/");
   }
 
   handleChange(e) {
@@ -22,8 +21,7 @@ class RegisterComponent extends Component {
   handleFormSubmit(e) {
     e.preventDefault();
     // console.log("usla");
-    this.auth
-      .register(this.state.name, this.state.email, this.state.password)
+    AuthService.register(this.state.name, this.state.email, this.state.password)
       .then(res => {
         console.log("usla");
         this.props.history.replace("/campaign");

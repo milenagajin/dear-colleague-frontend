@@ -1,47 +1,59 @@
 import decode from "jwt-decode";
+import config from "../config";
+import ApiService from "./ApiService";
 
-export default class AuthService {
+class AuthService extends ApiService {
   // Initializing important variables
-  constructor(domain) {
-    this.domain = domain || "http://localhost:8000/api"; // API server domain
-    this.fetch = this.fetch.bind(this); // React binding stuff 1
+  constructor() {
+    super();
     this.getProfile = this.getProfile.bind(this);
   }
 
-  login(email, password) {
-    // Get a token from api server using the fetch api
-    console.log("login");
-    return this.fetch(`${this.domain}/user/login`, {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password
-      })
-    }).then(res => {
-      console.log(res.token);
-      this.setToken(res.token); // Setting the token in localStorage
-      return Promise.resolve(res);
+  login = async (email, password) => {
+    const response = await this.apiClient.post(config.API_LOGIN_URL, {
+      email,
+      password
     });
-  }
+    let { token, user } = response.data;
+    user.token = token;
+    await this.setUser(user);
+    return response;
+  };
 
-  register(name, email, password) {
-    return this.fetch(`${this.domain}/user/register`, {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        email,
-        password
-      })
-    }).then(res => {
-      console.log(res);
-      this.setToken(res.token);
-      return Promise.resolve(res);
+  register = async (name, email, password) => {
+    const response = await this.apiClient.post(config.API_REGISTER_URL, {
+      name,
+      email,
+      password
     });
-  }
+
+    const { token } = response.data.token;
+    await this.setToken(token);
+    return response;
+  };
+
+  loginMagicLink = (email, campaignId) => {
+    return this.apiClient.post(config.API_LOGIN_MAGIC_LINK, {
+      email: email,
+      campaignId: campaignId
+    });
+  };
+
+  validateMagicLinkToken = async tokenFromUrl => {
+    const headers = {
+      Authorization: "Bearer " + tokenFromUrl,
+      "Access-Control-Allow-Origin": "*"
+    };
+
+    this.api.attachHeaders(headers);
+    await this.apiClient.get(config.API_VALIDATE_TOKEN_MAGIC_LINK);
+    this.setToken(tokenFromUrl);
+  };
 
   loggedIn() {
     // Checks if there is a saved token and it's still valid
-    const token = this.getToken(); // GEtting token from localstorage
+    const { token } = this.getUser(); // GEtting token from localstorage
+    console.log(token);
     return !!token && !this.isTokenExpired(token);
   }
 
@@ -57,56 +69,24 @@ export default class AuthService {
     }
   }
 
-  setToken(idToken) {
-    // Saves user token to localStorage
-    localStorage.setItem("id_token", idToken);
+  setUser(user) {
+    localStorage.setItem("user", JSON.stringify(user));
   }
 
-  getToken() {
-    // Retrieves the user token from localStorage
-    return localStorage.getItem("id_token");
+  getUser() {
+    return JSON.parse(localStorage.getItem("user"));
   }
 
   logout() {
     // Clear user token and profile data from localStorage
-    localStorage.removeItem("id_token");
+    localStorage.removeItem("user");
   }
 
   getProfile() {
     // Using jwt-decode npm package to decode the token
     return decode(this.getToken());
   }
-
-  fetch(url, options) {
-    // performs api calls sending the required authentication headers
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "application/json"
-    };
-
-    // Setting Authorization header
-    // Authorization: Bearer xxxxxxx.xxxxxxxx.xxxxxx
-    if (this.loggedIn()) {
-      headers["Authorization"] = "Bearer " + this.getToken();
-    }
-
-    return fetch(url, {
-      headers,
-      ...options
-    })
-      .then(this._checkStatus)
-      .then(response => response.json());
-  }
-
-  _checkStatus(response) {
-    // raises an error in case response status is not a success
-    if (response.status >= 200 && response.status < 300) {
-      // Success status lies between 200 to 300
-      return response;
-    } else {
-      var error = new Error(response.statusText);
-      error.response = response;
-      throw error;
-    }
-  }
 }
+
+const authService = new AuthService();
+export default authService;

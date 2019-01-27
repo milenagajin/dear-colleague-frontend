@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import "./App.css";
 import { Route, Switch, Redirect } from "react-router-dom";
-import AddEditCampaignScreen from "./screens/AddEditCampaignScreen";
-import LoginComponent from "./components/LoginComponent";
-import CampaignScreen from "./screens/CampaignScreen";
-import UserScreen from "./screens/UserScreen";
-import AddEditUserScreen from "./screens/AddEditUserScreen";
+import AddEditCampaignScreen from "./screens/campaign/AddEditCampaignScreen";
+import LoginComponent from "./components/auth/LoginComponent";
+import CampaignScreen from "./screens/campaign/CampaignScreen";
+import UserScreen from "./screens/user/UserScreen";
+import AddEditUserScreen from "./screens/user/AddEditUserScreen";
+import RegisterComponent from "./components/auth/RegisterComponent";
+import MagicLinkScreen from "./screens/auth/MagicLinkScreen";
 
 class App extends Component {
   render() {
@@ -13,6 +15,7 @@ class App extends Component {
       <div className="App">
         <Switch>
           <Route exact path="/login" component={LoginComponent} />
+          <Route exact path="/register" component={RegisterComponent} />
           <Route
             exact
             path="/campaigns/add"
@@ -20,40 +23,30 @@ class App extends Component {
           />
           <Route
             exact
-            path="/campaigns/edit/:id"
+            path="/campaigns/edit/:campaignId"
             component={AddEditCampaignScreen}
           />
           <Route exact path="/campaigns" component={CampaignScreen} />
-          <Route exact path="/campaigns/:id/users" component={UserScreen} />
           <Route
             exact
-            path="/campaigns/:id/users/:user_id"
+            path="/campaigns/:campaignId/users"
+            component={UserScreen}
+          />
+          <Route
+            exact
+            path="/campaigns/:campaignId/users/:userId"
             component={AddEditUserScreen}
+          />
+          <Route
+            exact
+            path="/campaigns/:campaignId/user"
+            component={MagicLinkScreen}
           />
           <Redirect from="/" to="/campaigns" />
         </Switch>
-
-        {/* <div>
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome {this.props.user.email}</h2>
-          </div>
-          <p className="App-intro">
-          <button
-          type="button"
-          className="form-submit"
-          onClick={this.handleLogout.bind(this)}
-          >
-          Logout
-          </button>
-        </p> */}
       </div>
     );
   }
 }
 
-// App.propTypes = {
-//   location: PropTypes.shape({
-//     pathname: PropTypes.string.isRequired
-//   }).isRequired
-// };
 export default App;

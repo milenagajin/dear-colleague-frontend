@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import withAuthComponent from "../components/withAuthComponent";
-import UserService from "../services/UserService";
-import NavbarScreen from "./NavbarScreen";
+import withAuthComponent from "../../components/auth/withAuthComponent";
+import UserService from "../../services/UserService";
 
 class AddEditUserScreen extends Component {
   constructor(props) {
@@ -14,55 +13,60 @@ class AddEditUserScreen extends Component {
     user: {
       id: "",
       name: "",
-      email: ""
+      email: "",
+      campaignId: this.props.match.params.campaignId
     }
   };
 
   componentDidMount() {
-    const userId = this.props.match.params.user_id;
+    const userId = this.props.match.params.userId;
     if (userId) {
       this.getUser(userId);
     }
   }
 
-  getUser(userId) {
-    UserService.getOne(userId)
-      .then(res => {
-        console.log("response", res.data);
-        this.setState({ user: res.data }, () =>
-          console.log("dddd", this.state.user)
-        );
-      })
-      .catch(error => {
-        console.log(error);
-      });
+  async getUser(userId) {
+    try {
+      const { data } = await UserService.getOne(userId);
+      data.campaignId = this.props.match.params.campaignId;
+      await this.setState({ user: data });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  handleChange(e) {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
+  handleChange(event) {
+    const { name, value } = event.target;
+    let user = { ...this.state.user, [name]: value };
+    this.setState({ user });
   }
 
   handleFormSubmit(event) {
     event.preventDefault();
-    this.state.id ? this.editUser() : this.createUser();
+    this.state.user.id ? this.editUser() : this.createUser();
   }
 
-  createUser() {
-    UserService.saveOne(this.state.user)
-      .then(() => {
-        this.redirect();
-      })
-      .catch(error => console.log(error));
+  async createUser() {
+    try {
+      const { data } = await UserService.saveOne(this.state.user);
+      this.props.addUser(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async editUser() {
+    try {
+      await UserService.saveOne(this.state.user);
+      this.redirect();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  editUser() {
-    UserService.saveOne(this.state.user)
-      .then(() => {
-        this.redirect();
-      })
-      .catch(error => console.log(error));
+  redirect() {
+    this.props.history.replace(
+      `/campaigns/${this.props.match.params.campaignId}/users`
+    );
   }
 
   render() {
@@ -74,7 +78,7 @@ class AddEditUserScreen extends Component {
               <input
                 className="form-control"
                 placeholder="First and last name..."
-                name="user.name"
+                name="name"
                 type="text"
                 value={this.state.user.name}
                 onChange={this.handleChange}
@@ -84,7 +88,7 @@ class AddEditUserScreen extends Component {
               <input
                 className="form-control"
                 placeholder="Email..."
-                name="user.email"
+                name="email"
                 type="text"
                 value={this.state.user.email}
                 onChange={this.handleChange}

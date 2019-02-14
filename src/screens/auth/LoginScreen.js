@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import "../css/Login.css";
+import "../../components/css/Login.css";
 import AuthService from "../../services/AuthService";
+import { connect } from 'react-redux';
+import { setActiveUser } from "../../store/actions/UserActions";
 
-class Login extends Component {
+class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
@@ -17,12 +19,12 @@ class Login extends Component {
     await this.setState({
       [e.target.name]: e.target.value
     });
-    console.log(this.state);
   }
 
   handleFormSubmit = async e => {
     e.preventDefault();
-    await AuthService.login(this.state.email, this.state.password);
+    const user = await AuthService.login(this.state.email, this.state.password);
+    this.props.setActiveUser(user);
     this.props.history.push("/");
   };
 
@@ -59,4 +61,12 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+  setActiveUser: user => dispatch(setActiveUser(user))
+});
+
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(LoginScreen);

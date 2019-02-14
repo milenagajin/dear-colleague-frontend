@@ -2,11 +2,11 @@ import React, { Component } from "react";
 import "./App.css";
 import { Route, Switch, Redirect } from "react-router-dom";
 import AddEditCampaignScreen from "./screens/campaign/AddEditCampaignScreen";
-import LoginComponent from "./components/auth/LoginComponent";
+import LoginComponent from "./screens/auth/LoginScreen";
 import CampaignScreen from "./screens/campaign/CampaignScreen";
 import UserScreen from "./screens/user/UserScreen";
 import AddEditUserScreen from "./screens/user/AddEditUserScreen";
-import RegisterComponent from "./components/auth/RegisterComponent";
+import RegisterComponent from "./screens/auth/RegisterScreen";
 import MagicLinkScreen from "./screens/auth/MagicLinkScreen";
 
 class App extends Component {

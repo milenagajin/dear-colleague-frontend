@@ -2,12 +2,9 @@ import ApiService from "./ApiService";
 import config from "../config";
 
 class NoteService extends ApiService {
-  constructor() {
-    super();
-  }
 
-  notesUserSent = async (idUser, campaignId) => {
-    const response = this.apiClient.get(`sent-notes/${idUser}/${campaignId}`);
+  notesUserSent = async (campaignId, userId) => {
+    const response = this.apiClient.get(`campaign/${campaignId}/sent-notes/user/${userId}`);
     return response;
   };
 

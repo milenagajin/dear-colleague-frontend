@@ -1,25 +1,28 @@
 import React, { Component } from "react";
 import UserListComponent from "../../components/user/UserListComponent";
 import UserService from "../../services/UserService";
-import withAuthComponent from "../../components/auth/withAuthComponent";
+import withAuthComponent from "../auth/withAuthComponent";
 import NavbarScreen from "../NavbarScreen";
 import AddEditUserScreen from "./AddEditUserScreen";
 import AuthService from "../../services/AuthService";
 import authService from "../../services/AuthService";
 import noteService from "../../services/NoteService";
 import Modal from "../../components/Modal";
+import { connect } from 'react-redux';
+import { setUsers } from "../../store/actions/UsersAction";
+import { deleteUser } from "../../store/actions/UsersAction";
 
 class UserScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      users: [],
-      changed: false,
+      canVote: true,
       sentNotes: [],
       note: {
         text: "",
         to_user: "",
-        from_user: ""
+        from_user: "",
+        campaign_id: this.props.match.params.campaignId
       }
     };
 
@@ -28,31 +31,29 @@ class UserScreen extends Component {
   }
 
   componentDidMount() {
-    this.getUsers();
+    this.setUsers();
     this.getSentNotes();
     this.setFromUserId();
   }
 
-  async getUsers() {
+  async setUsers() {
     const { data } = await UserService.getAll(
       this.props.match.params.campaignId
     );
-    this.setState({
-      users: data.filter(user => user.id !== this.props.user.id)
-    });
+     const users = data.filter(user => user.id !== this.props.user.id);
+     this.props.setUsers(users);
   }
 
   async getSentNotes() {
-    const { data } = await noteService.notesUserSent(authService.getUser().id);
-    console.log(data);
-    this.setState({ sentNotes: data });
+    const { data } = await noteService.notesUserSent(
+    this.props.match.params.campaignId, authService.getUser().id);
+    await this.setState({ sentNotes: data });
   }
 
   async handleDelete(id) {
     try {
       await UserService.delete(id);
-      let users = this.state.users.filter(user => user.id !== id);
-      this.setState({ users });
+      this.props.deleteUser(id);
     } catch (error) {
       console.log(error);
     }
@@ -77,27 +78,21 @@ class UserScreen extends Component {
     this.setState({ note });
   };
 
-  setFromUserId = () => {
+  setFromUserId = async () => {
     const { id } = authService.getUser();
     let note = { ...this.state.note, from_user: id };
     this.setState({ note });
   };
 
   isVotedForUser = userId => {
-    let isVoted = false;
-    // const sentNotes = ;
-    this.state.sentNotes.forEach(note => {
-      if (note.to_user === userId) {
-        isVoted = true;
-      }
-    });
-    return isVoted;
+     return this.state.sentNotes.some(note => note.to_user === userId);
   };
+
 
   handleSubmit = async event => {
     event.preventDefault();
-    await noteService.saveOne(this.state.note);
-    this.getSentNotes();
+    const { data } = await noteService.saveOne(this.state.note);
+    await this.setState({ sentNotes: [...this.state.sentNotes, data], note: ''})
   };
 
   render() {
@@ -110,15 +105,19 @@ class UserScreen extends Component {
             inputValue={this.state.note.text}
             handleChange={e => this.handleChange(e)}
             handleSubmit={e => this.handleSubmit(e)}
-          />
+            />
+          {authService.getUser().admin   &&
           <AddEditUserScreen
-            history={this.props.history}
-            match={this.props.match}
-            addUser={this.addUser}
-          />
+          history={this.props.history}
+          match={this.props.match}
+          addUser={this.addUser}
+          />}
+          &nbsp;
           <UserListComponent
+            isAdmin={authService.getUser().admin}
+            numOfVotes={this.state.sentNotes.length}
             campaignId={this.props.match.params.campaignId}
-            users={this.state.users}
+            users= {this.props.users}
             onDeletePress={this.handleDelete}
             onInvatationPress={this.handleInvatation}
             setToUserId={this.setToUserId}
@@ -130,4 +129,20 @@ class UserScreen extends Component {
   }
 }
 
-export default withAuthComponent(UserScreen);
+
+
+const mapDispatchToProps = dispatch => ({
+  setUsers: users => dispatch(setUsers(users)),
+  deleteUser: id => dispatch(deleteUser(id))
+});
+
+const mapStateToProps = state => {
+ return { users: state.users }
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withAuthComponent(UserScreen));
+
+

@@ -1,6 +1,7 @@
 import React from "react";
 
 const User = ({
+  numOfVotes,
   user,
   campaignId,
   count,
@@ -10,6 +11,7 @@ const User = ({
   setToUserId,
   isVotedForUser
 }) => {
+
   const getLink = () => {
     return (
       <a href={`/campaigns/${campaignId}/users/${user.id}`}>{user.name}</a>
@@ -28,6 +30,10 @@ const User = ({
   };
 
   const voteBtn = () => {
+    if(numOfVotes >= 3 ){
+      return <span>Voted max times</span>
+    }
+
     if (!isVotedForUser(user.id)) {
       return (
         <button
@@ -37,20 +43,23 @@ const User = ({
           data-target="#voteModal"
           onClick={() => setToUserId(user.id)}
         >
-          Vote
+        Vote
         </button>
       );
     } else {
       return <span>U've already voted</span>;
     }
   };
+
+
   return (
+    
     <tr>
       <td>{count}</td>
-      <td>{isAdmin === "true" ? getLink() : user.name}</td>
+      <td>{isAdmin ? getLink() : user.name}</td>
       <td>{user.votes}</td>
       <td>
-        {isAdmin === "true" ? (
+        {isAdmin ? (
           <button
             onClick={() => onInvatationPress(user.email, campaignId)}
             className="btn btn-warning"
@@ -61,7 +70,7 @@ const User = ({
           voteBtn()
         )}
       </td>
-      <td>{isAdmin === "true" && deleteBtn}</td>
+      <td>{isAdmin && deleteBtn()}</td>
     </tr>
   );
 };

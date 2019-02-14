@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import CampaignService from "../../services/CampaignService";
-import withAuthComponent from "../../components/auth/withAuthComponent";
+import withAuthComponent from "../auth/withAuthComponent";
 import NavbarScreen from "../NavbarScreen";
 
 class AddEditCampaignScreen extends Component {

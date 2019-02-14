@@ -7,12 +7,9 @@ import axios from "axios";
 //   // });
 
 class HttpService {
+  
   constructor(options = {}) {
     this.client = axios.create(options);
-    // this.client.interceptors.response.use(
-    //   this.handleErrorResponse,
-    //   this.handleSuccessResponse
-    // );
     this.client.interceptors.response.use(
       response => {
         console.log(`response ${response}`);
@@ -32,16 +29,6 @@ class HttpService {
   removeHeaders(headerKeys) {
     headerKeys.forEach(key => delete this.client.defaults.headers[key]);
   }
-
-  // handleSuccessResponse(response) {
-  //   console.log("response");
-  // }
-
-  // handleErrorResponse(error) {
-  //   // const { status } = error.response;
-  //   Sentry.captureException(error);
-  //   return Promise.reject(error);
-  // }
 }
 
 const API_BASE_URL = `http://localhost:8000/api`;

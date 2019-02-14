@@ -3,11 +3,7 @@ import config from "../config";
 import ApiService from "./ApiService";
 
 class AuthService extends ApiService {
-  // Initializing important variables
-  constructor() {
-    super();
-    this.getProfile = this.getProfile.bind(this);
-  }
+
 
   login = async (email, password) => {
     const response = await this.apiClient.post(config.API_LOGIN_URL, {
@@ -17,7 +13,7 @@ class AuthService extends ApiService {
     let { token, user } = response.data;
     user.token = token;
     await this.setUser(user);
-    return response;
+    return user;
   };
 
   register = async (name, email, password) => {
@@ -27,9 +23,9 @@ class AuthService extends ApiService {
       password
     });
 
-    const { token } = response.data.token;
-    await this.setToken(token);
-    return response;
+    const { user, token } = response.data;
+    user.token = token;
+    this.setUser(user);
   };
 
   loginMagicLink = (email, campaignId) => {
@@ -46,22 +42,27 @@ class AuthService extends ApiService {
     };
 
     this.api.attachHeaders(headers);
-    await this.apiClient.get(config.API_VALIDATE_TOKEN_MAGIC_LINK);
-    this.setToken(tokenFromUrl);
+    const res = await this.apiClient.get(config.API_VALIDATE_TOKEN_MAGIC_LINK);
+    const {user} = res.data;
+    user.token = tokenFromUrl;
+    this.setUser(user);
   };
 
   loggedIn() {
-    // Checks if there is a saved token and it's still valid
-    const { token } = this.getUser(); // GEtting token from localstorage
-    console.log(token);
-    return !!token && !this.isTokenExpired(token);
+    // Checks if there is a saved user, and if it is, is user's token still valid
+      const user = this.getUser();
+      if(user) {
+      const { token } = user;
+      return !!token && !this.isTokenExpired(token);
+      }
+      return false
   }
 
   isTokenExpired(token) {
     try {
       const decoded = decode(token);
       if (decoded.exp < Date.now() / 1000) {
-        // Checking if token is expired.
+        // Checking if token is expired.  
         return true;
       } else return false;
     } catch (err) {
@@ -82,10 +83,6 @@ class AuthService extends ApiService {
     localStorage.removeItem("user");
   }
 
-  getProfile() {
-    // Using jwt-decode npm package to decode the token
-    return decode(this.getToken());
-  }
 }
 
 const authService = new AuthService();

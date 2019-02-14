@@ -1,31 +1,41 @@
 import axios from "axios";
+import ApiService from "./ApiService";
+import config from "../config";
+import authService from "./AuthService";
 
-const ENDPOINTS = {
-  BASE_URL_CAMPAIGNS: "http://localhost:8000/api/campaigns"
-};
+class CampaignService extends ApiService {
 
-class CampaignService {
+  constructor(){
+    super();
+    const token = authService.getUser().token;
+    const headers = {
+      Authorization: "Bearer " + token,
+      "Access-Control-Allow-Origin": "*"
+    };
+    this.api.attachHeaders(headers);
+  }
+
   getOne = id => {
-    return axios.get(`${ENDPOINTS.BASE_URL_CAMPAIGNS}/${id}`);
+    return this.apiClient.get(`${config.API_CAMPAIGNS}/${id}`);
   };
 
   getAll = () => {
-    return axios.get(`${ENDPOINTS.BASE_URL_CAMPAIGNS}`);
+    return this.apiClient.get(`${config.API_CAMPAIGNS}`);
   };
 
   saveOne = campaign => {
     if (campaign.id) {
-      return axios.put(
-        `${ENDPOINTS.BASE_URL_CAMPAIGNS}/edit/${campaign.id}`,
+      return this.apiClient.put(
+        `${config.API_CAMPAIGNS}/edit/${campaign.id}`,
         campaign
       );
     }
 
-    return axios.post(`${ENDPOINTS.BASE_URL_CAMPAIGNS}`, campaign);
+    return this.apiClient.post(`${config.API_CAMPAIGNS}`, campaign);
   };
 
   delete = id => {
-    return axios.delete(`${ENDPOINTS.BASE_URL_CAMPAIGNS}/${id}`);
+    return this.apiClient.delete(`${config.API_CAMPAIGNS}/${id}`);
   };
 }
 

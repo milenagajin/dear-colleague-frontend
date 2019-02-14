@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import CampaignService from "../../services/CampaignService";
 import CampaignListComponent from "../../components/campaign/CampaignListComponent";
-import withAuthComponent from "../../components/auth/withAuthComponent";
+import withAuthComponent from "../auth/withAuthComponent";
 import NavbarScreen from "../NavbarScreen";
-import authService from "../../services/AuthService";
 
 class CampaignScreen extends Component {
   constructor(props) {

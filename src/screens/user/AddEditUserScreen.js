@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import withAuthComponent from "../../components/auth/withAuthComponent";
+import withAuthComponent from "../auth/withAuthComponent";
 import UserService from "../../services/UserService";
+import { connect } from 'react-redux';
+import { addUser } from "../../store/actions/UsersAction";
 
 class AddEditUserScreen extends Component {
   constructor(props) {
@@ -54,6 +56,7 @@ class AddEditUserScreen extends Component {
       console.log(error);
     }
   }
+  
   async editUser() {
     try {
       await UserService.saveOne(this.state.user);
@@ -109,4 +112,11 @@ class AddEditUserScreen extends Component {
   }
 }
 
-export default withAuthComponent(AddEditUserScreen);
+const mapDispatchToProps = dispatch => ({
+  addUser: user => dispatch(addUser(user))
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(withAuthComponent(AddEditUserScreen));

@@ -27,9 +27,9 @@ const Modal = ({ inputName, inputValue, handleChange, handleSubmit }) => {
           </div>
           <div className="modal-body">
             <input
-              name={inputName}
-              value={inputValue}
-              onChange={handleChange}
+              name={ inputName }
+              value={ inputValue }
+              onChange={ handleChange }
             />
           </div>
           <div className="modal-footer">
@@ -44,7 +44,7 @@ const Modal = ({ inputName, inputValue, handleChange, handleSubmit }) => {
               <input
                 type="submit"
                 value="SUBMIT"
-                onClick={handleSubmit }
+                onClick={ handleSubmit }
                 className="btn btn-primary"
                 data-dismiss="modal"
               />

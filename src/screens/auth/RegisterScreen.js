@@ -18,17 +18,10 @@ class RegisterComponent extends Component {
     });
   }
 
-  handleFormSubmit(e) {
+  async handleFormSubmit(e) {
     e.preventDefault();
-    // console.log("usla");
-    AuthService.register(this.state.name, this.state.email, this.state.password)
-      .then(res => {
-        console.log("usla");
-        this.props.history.replace("/campaign");
-      })
-      .catch(err => {
-        alert(err);
-      });
+    await AuthService.register(this.state.name, this.state.email, this.state.password);
+    this.props.history.replace("/campaigns");
   }
 
   render() {

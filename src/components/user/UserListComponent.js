@@ -2,6 +2,7 @@ import React from "react";
 import User from "./User";
 
 const UserListComponent = ({
+  numOfVotes,
   users,
   campaignId,
   onDeletePress,
@@ -10,9 +11,16 @@ const UserListComponent = ({
   setToUserId,
   isVotedForUser
 }) => {
+  console.log(users);
   let count = 0;
-  let th;
-  isAdmin === "true" ? (th = <th>Invite</th>) : (th = <th>Vote</th>);
+  let th, th1;
+
+  if(isAdmin){ 
+    th = <th>Invite</th>; th1= <th>Delete</th>
+  } else {
+    th = <th>Vote</th>; th1 = null; 
+  }
+  
   return (
     <div>
       <table className="table table-striped">
@@ -22,6 +30,7 @@ const UserListComponent = ({
             <th>Employee</th>
             <th>Votes</th>
             {th}
+            {th1}
             <th />
           </tr>
         </thead>
@@ -31,6 +40,7 @@ const UserListComponent = ({
 
             return (
               <User
+                numOfVotes={numOfVotes}
                 isVotedForUser={isVotedForUser}
                 setToUserId={setToUserId}
                 isAdmin={isAdmin}

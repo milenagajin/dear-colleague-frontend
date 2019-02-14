@@ -1,38 +1,32 @@
 import React, { Component } from "react";
-import "./css/Login.css";
-import AuthService from "../services/AuthService";
+import "../../components/css/Login.css";
+import AuthService from "../../services/AuthService";
+import { connect } from 'react-redux';
+import { setActiveUser } from "../../store/actions/UserActions";
 
-class Login extends Component {
+class LoginScreen extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
-    this.auth = new AuthService();
   }
   //if we are already logged in we want to redirect user to homepage
   componentWillMount() {
-    if (this.auth.loggedIn()) this.props.history.replace("/");
+    if (AuthService.loggedIn()) this.props.history.replace("/");
   }
 
-  handleChange(e) {
-    this.setState({
+  async handleChange(e) {
+    await this.setState({
       [e.target.name]: e.target.value
     });
   }
 
-  handleFormSubmit(e) {
+  handleFormSubmit = async e => {
     e.preventDefault();
-    console.log("usla");
-    this.auth
-      .login(this.state.email, this.state.password)
-      .then(res => {
-        // console.log("usla");
-        this.props.history.replace("/");
-      })
-      .catch(err => {
-        alert(err);
-      });
-  }
+    const user = await AuthService.login(this.state.email, this.state.password);
+    this.props.setActiveUser(user);
+    this.props.history.push("/");
+  };
 
   render() {
     return (
@@ -67,4 +61,12 @@ class Login extends Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = dispatch => ({
+  setActiveUser: user => dispatch(setActiveUser(user))
+});
+
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(LoginScreen);

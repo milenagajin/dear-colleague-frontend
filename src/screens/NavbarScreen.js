@@ -2,11 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import AuthService from "../services/AuthService";
 
-const Auth = new AuthService();
-
 class NavbarScreen extends Component {
   handleLogout() {
-    Auth.logout();
+    AuthService.logout();
     this.props.history.replace("/login");
   }
   render() {

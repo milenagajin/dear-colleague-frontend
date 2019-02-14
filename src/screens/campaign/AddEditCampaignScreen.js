@@ -1,14 +1,14 @@
 import React, { Component } from "react";
-import CampaignService from "../services/CampaignService";
-import withAuthComponent from "../components/withAuthComponent";
-import NavbarScreen from "./NavbarScreen";
+import CampaignService from "../../services/CampaignService";
+import withAuthComponent from "../auth/withAuthComponent";
+import NavbarScreen from "../NavbarScreen";
 
 class AddEditCampaignScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      id: null,
+      id: "",
       name: "",
       company_name: ""
     };
@@ -18,18 +18,23 @@ class AddEditCampaignScreen extends Component {
   }
 
   componentDidMount() {
-    const id = this.props.match.params.id;
-    if (id) {
-      console.log(CampaignService.getOne);
-      CampaignService.getOne(id)
-        .then(response => {
-          this.setState({
-            id: response.data.id,
-            name: response.data.name,
-            company_name: response.data.company_name
-          });
-        })
-        .catch(error => console.log(error));
+    const campaignId = this.props.match.params.campaignId;
+    if (campaignId) this.getOne(campaignId);
+  }
+
+  async getOne(campaignId) {
+    try {
+      const { data } = await CampaignService.getOne(campaignId);
+      this.setState(
+        {
+          id: data.id,
+          name: data.name,
+          company_name: data.company_name
+        },
+        console.log(this.state)
+      );
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -46,27 +51,33 @@ class AddEditCampaignScreen extends Component {
   handleFormSubmit(event) {
     event.preventDefault();
 
-    if (this.state.id) {
+    this.state.id ? this.editCampaign() : this.createCampaign();
+  }
+
+  async editCampaign() {
+    try {
       let edited = {};
       edited.id = this.state.id;
       edited.name = this.state.name;
       edited.company_name = this.state.company_name;
 
-      CampaignService.saveOne(edited)
-        .then(() => {
-          this.redirect();
-        })
-        .catch(error => console.log(error));
-    } else {
+      await CampaignService.saveOne(edited);
+      this.redirect();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async createCampaign() {
+    try {
       let newCampaign = {};
       newCampaign.id = null;
       newCampaign.name = this.state.name;
       newCampaign.company_name = this.state.company_name;
-      CampaignService.saveOne(newCampaign)
-        .then(() => {
-          this.redirect();
-        })
-        .catch(error => console.log(error));
+      await CampaignService.saveOne(newCampaign);
+      this.redirect();
+    } catch (error) {
+      console.log(error);
     }
   }
 

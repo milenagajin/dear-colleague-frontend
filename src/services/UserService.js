@@ -1,28 +1,37 @@
-import axios from "axios";
+import config from "../config";
+import authService from "./AuthService";
+import ApiService from "./ApiService";
 
-const ENDPOINTS = {
-  BASE_URL: "http://localhost:8000/api"
-};
+class UserService extends ApiService {
 
-class UserService {
+  constructor(){
+    super();
+    const token = authService.getUser().token;
+    const headers = {
+      Authorization: "Bearer " + token,
+      "Access-Control-Allow-Origin": "*"
+    };
+    this.api.attachHeaders(headers);
+  }
+
   getAll = companyId => {
-    return axios.get(`${ENDPOINTS.BASE_URL}/campaigns/${companyId}/users`);
+    return this.apiClient.get(`${config.API_CAMPAIGNS}/${companyId}/users`);
   };
 
   getOne = userId => {
-    return axios.get(`${ENDPOINTS.BASE_URL}/users/${userId}`);
+    return this.apiClient.get(`${config.API_USERS}/${userId}`);
   };
 
   saveOne = user => {
     if (user.id) {
-      return axios.put(`${ENDPOINTS.BASE_URL}/users/edit/${user.id}`, user);
+      return this.apiClient.put(`${config.API_USERS}/edit/${user.id}`, user);
     }
 
-    return axios.post(`${ENDPOINTS.BASE_URL}/users`, user);
+    return this.apiClient.post(`${config.API_USERS}`, user);
   };
 
   delete = id => {
-    return axios.delete(`${ENDPOINTS.BASE_URL}/users/${id}`);
+    return this.apiClient.delete(`${config.API_USERS}/${id}`);
   };
 }
 

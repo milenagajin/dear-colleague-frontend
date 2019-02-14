@@ -1,4 +1,3 @@
-import axios from "axios";
 import ApiService from "./ApiService";
 import config from "../config";
 import authService from "./AuthService";

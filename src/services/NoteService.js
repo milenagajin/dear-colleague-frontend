@@ -1,7 +1,17 @@
 import ApiService from "./ApiService";
 import config from "../config";
+import authService from "./AuthService";
 
 class NoteService extends ApiService {
+  constructor(){
+    super();
+    const token = authService.getUser().token;
+    const headers = {
+      Authorization: "Bearer " + token,
+      "Access-Control-Allow-Origin": "*"
+    };
+    this.api.attachHeaders(headers);
+  }
 
   notesUserSent = async (campaignId, userId) => {
     const response = this.apiClient.get(`campaign/${campaignId}/sent-notes/user/${userId}`);

@@ -8,7 +8,7 @@ class RegisterComponent extends Component {
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (AuthService.loggedIn()) this.props.history.replace("/");
   }
 

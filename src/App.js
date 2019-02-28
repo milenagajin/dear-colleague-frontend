@@ -19,11 +19,13 @@ class App extends Component {
           <Route
             exact
             path="/campaigns/add"
+            key="new-campaign"
             component={AddEditCampaignScreen}
           />
           <Route
             exact
             path="/campaigns/edit/:campaignId"
+            key="edit-campaign"            
             component={AddEditCampaignScreen}
           />
           <Route exact path="/campaigns" component={CampaignScreen} />

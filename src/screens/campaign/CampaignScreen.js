@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import CampaignService from "../../services/CampaignService";
 import CampaignListComponent from "../../components/campaign/CampaignListComponent";
 import withAuthComponent from "../auth/withAuthComponent";
 import NavbarScreen from "../NavbarScreen";
+import CampaignService from "../../services/CampaignService";
 
 class CampaignScreen extends Component {
   constructor(props) {
@@ -14,10 +14,11 @@ class CampaignScreen extends Component {
   }
 
   componentDidMount() {
-    this.getCampaigns();
+    this.getCampaigns();   
   }
 
   async getCampaigns() {
+    // alert('campaign');
     const { data } = await CampaignService.getAll();
     this.setState({
       campaigns: data

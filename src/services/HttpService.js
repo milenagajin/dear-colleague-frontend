@@ -1,11 +1,5 @@
 import axios from "axios";
 
-// import * as Sentry from "@sentry/browser";
-
-// Sentry.init({
-//   //  dsn: "https://<key>@sentry.io/<project>"
-//   // });
-
 class HttpService {
   
   constructor(options = {}) {
@@ -22,8 +16,8 @@ class HttpService {
     );
   }
 
-  attachHeaders(headers) {
-    Object.assign(this.client.defaults.headers, headers);
+  setAuthorizationHeader(token) {
+    this.client.defaults.headers.common['Authorization'] =  "Bearer " + token;
   }
 
   removeHeaders(headerKeys) {
@@ -35,7 +29,8 @@ const API_BASE_URL = `http://localhost:8000/api`;
 
 const options = {
   baseURL: API_BASE_URL,
-  Accept: "application/json"
+  Accept: "application/json",
+  "Access-Control-Allow-Origin": "*"
 };
 
 const httpService = new HttpService(options);

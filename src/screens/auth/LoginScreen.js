@@ -11,10 +11,11 @@ class LoginScreen extends Component {
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
   }
   //if we are already logged in we want to redirect user to homepage
-  componentWillMount() {
+  componentDidMount() {
+    // console.log(await AuthService.loggedIn(), 'login screen');
     if (AuthService.loggedIn()) this.props.history.replace("/");
   }
-
+  
   async handleChange(e) {
     await this.setState({
       [e.target.name]: e.target.value
@@ -54,6 +55,7 @@ class LoginScreen extends Component {
               type="submit"
               onClick={this.handleFormSubmit}
             />
+            <a href="/register">Or register?</a>
           </form>
         </div>
       </div>

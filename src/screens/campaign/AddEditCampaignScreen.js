@@ -19,7 +19,8 @@ class AddEditCampaignScreen extends Component {
 
   componentDidMount() {
     const campaignId = this.props.match.params.campaignId;
-    if (campaignId) this.getOne(campaignId);
+    if (campaignId) 
+      this.getOne(campaignId);
   }
 
   async getOne(campaignId) {
@@ -50,7 +51,6 @@ class AddEditCampaignScreen extends Component {
 
   handleFormSubmit(event) {
     event.preventDefault();
-
     this.state.id ? this.editCampaign() : this.createCampaign();
   }
 

@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import AuthService from "../services/AuthService";
 
 class NavbarScreen extends Component {
-  handleLogout() {
-    AuthService.logout();
+  async handleLogout() {
+    await AuthService.logout();
     this.props.history.replace("/login");
   }
   render() {

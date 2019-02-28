@@ -23,7 +23,7 @@ class MagicLinkScreen extends Component {
 
   redirectLoggedInUser() {
     let campaignId = this.props.match.params.campaignId;
-    this.props.history.push(`/campaigns/$/{campaignId}/users`);
+    this.props.history.push(`/campaigns/${campaignId}/users`);
   }
 
   render() {

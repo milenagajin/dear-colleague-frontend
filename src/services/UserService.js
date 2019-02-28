@@ -1,19 +1,19 @@
 import config from "../config";
-import authService from "./AuthService";
 import ApiService from "./ApiService";
+import authService from "./AuthService";
 
 class UserService extends ApiService {
-
   constructor(){
     super();
-    const token = authService.getUser().token;
-    const headers = {
-      Authorization: "Bearer " + token,
-      "Access-Control-Allow-Origin": "*"
-    };
-    this.api.attachHeaders(headers);
+    this.init();
   }
 
+  init(){
+    const user = authService.getUser();
+    if(user)
+      this.api.setAuthorizationHeader(user.token)
+  }
+  
   getAll = companyId => {
     return this.apiClient.get(`${config.API_CAMPAIGNS}/${companyId}/users`);
   };

@@ -5,8 +5,6 @@ class ApiService {
     this.api = httpService;
     this.apiClient = this.api.client;
   }
-
-  
 }
 
 export default ApiService;

@@ -4,7 +4,6 @@ import ApiService from "./ApiService";
 
 class AuthService extends ApiService {
 
-
   login = async (email, password) => {
     const response = await this.apiClient.post(config.API_LOGIN_URL, {
       email,
@@ -12,50 +11,51 @@ class AuthService extends ApiService {
     });
     let { token, user } = response.data;
     user.token = token;
-    await this.setUser(user);
+    this.setUser(user);
+    this.setAuthorizationHeader(token);
     return user;
   };
-
+  
   register = async (name, email, password) => {
     const response = await this.apiClient.post(config.API_REGISTER_URL, {
       name,
       email,
       password
     });
-
     const { user, token } = response.data;
     user.token = token;
     this.setUser(user);
+    this.setAuthorizationHeader(token);
   };
 
   loginMagicLink = (email, campaignId) => {
-    return this.apiClient.post(config.API_LOGIN_MAGIC_LINK, {
-      email: email,
-      campaignId: campaignId
+      this.apiClient.post(config.API_LOGIN_MAGIC_LINK, {
+        email: email,
+        campaignId: campaignId
     });
   };
+    setAuthorizationHeader(token){
+      if(token){
+         this.api.setAuthorizationHeader(token);
+      }
+  }
 
-  validateMagicLinkToken = async tokenFromUrl => {
-    const headers = {
-      Authorization: "Bearer " + tokenFromUrl,
-      "Access-Control-Allow-Origin": "*"
-    };
-
-    this.api.attachHeaders(headers);
+  validateMagicLinkToken = async () => {
     const res = await this.apiClient.get(config.API_VALIDATE_TOKEN_MAGIC_LINK);
-    const {user} = res.data;
-    user.token = tokenFromUrl;
+    const { user, token } = res.data;
+    user.token = token;
     this.setUser(user);
+    this.setAuthorizationHeader(token);
   };
 
-  loggedIn() {
+    loggedIn() {
     // Checks if there is a saved user, and if it is, is user's token still valid
       const user = this.getUser();
       if(user) {
-      const { token } = user;
-      return !!token && !this.isTokenExpired(token);
+        const { token } = user;
+        return !!token && !this.isTokenExpired(token);
       }
-      return false
+      return false;
   }
 
   isTokenExpired(token) {
@@ -71,16 +71,18 @@ class AuthService extends ApiService {
   }
 
   setUser(user) {
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
   }
 
   getUser() {
-    return JSON.parse(localStorage.getItem("user"));
+    const user = localStorage.getItem('user');
+    return  JSON.parse(user);
+  
   }
 
-  logout() {
+  async logout() {
     // Clear user token and profile data from localStorage
-    localStorage.removeItem("user");
+   localStorage.removeItem('user');
   }
 
 }
